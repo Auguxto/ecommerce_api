@@ -22,7 +22,12 @@ export default class ProductService {
 
     const product = await prisma.product.create({
       data: {
-        ...createProductDto
+        ...createProductDto,
+        inventory: {
+          create: {
+            quantity: createProductDto.quantity
+          }
+        }
       }
     });
 
@@ -33,6 +38,9 @@ export default class ProductService {
     const product = await prisma.product.findUnique({
       where: {
         id
+      },
+      include: {
+        inventory: true
       }
     });
 
@@ -57,6 +65,9 @@ export default class ProductService {
     let product = await prisma.product.findUnique({
       where: {
         id
+      },
+      include: {
+        inventory: true
       }
     });
 
@@ -66,8 +77,16 @@ export default class ProductService {
       where: {
         id
       },
+      include: {
+        inventory: true
+      },
       data: {
-        ...updateProductDto
+        ...updateProductDto,
+        inventory: {
+          update: {
+            quantity: updateProductDto.quantity || product.inventory?.quantity
+          }
+        }
       }
     });
 

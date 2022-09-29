@@ -43,12 +43,21 @@ model Address {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String            @id @default(uuid())
   name        String
-  stock       Int
+  inventory   ProductInventory?
   price       Float
   warranty    Int
   description String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+}
+
+model ProductInventory {
+  id         String   @id @default(uuid())
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id String   @unique
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
