@@ -45,6 +45,8 @@ model Address {
 model Product {
   id          String            @id @default(uuid())
   name        String
+  brand       ProductBrand?     @relation(fields: [brand_id], references: [id])
+  brand_id    String?
   inventory   ProductInventory?
   price       Float
   warranty    Int
@@ -60,4 +62,12 @@ model ProductInventory {
   quantity   Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model ProductBrand {
+  id         String    @id @default(uuid())
+  name       String    @unique
+  products   Product[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
 }

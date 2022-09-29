@@ -10,6 +10,10 @@ export class UpdateProductDto {
   name: string;
 
   @IsOptional()
+  @IsString()
+  brand_id: string;
+
+  @IsOptional()
   @IsNumber()
   quantity: number;
 

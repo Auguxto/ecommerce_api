@@ -21,12 +21,25 @@ export default class ProductService {
     if (!user || !user.admin) throw new AppError("Unauthorized", 401);
 
     const quantity = createProductDto.quantity;
+    const brand_id = createProductDto.brand_id;
 
     delete createProductDto.quantity;
+    delete createProductDto.brand_id;
 
-    const product = await prisma.product.create({
+    if (brand_id) {
+      const brand = await prisma.productBrand.findUnique({
+        where: {
+          id: brand_id
+        }
+      });
+
+      if (!brand) throw new AppError("Brand not found", 404);
+    }
+
+    let product = await prisma.product.create({
       data: {
         ...createProductDto,
+        brand_id,
         inventory: {
           create: {
             quantity: quantity
@@ -34,7 +47,8 @@ export default class ProductService {
         }
       },
       include: {
-        inventory: true
+        inventory: true,
+        brand: true
       }
     });
 
@@ -47,7 +61,8 @@ export default class ProductService {
         id
       },
       include: {
-        inventory: true
+        inventory: true,
+        brand: true
       }
     });
 
@@ -81,18 +96,32 @@ export default class ProductService {
     if (!product) throw new AppError("Product nout found", 404);
 
     const quantity = updateProductDto.quantity;
+    const brand_id = updateProductDto.brand_id;
 
     delete updateProductDto.quantity;
+    delete updateProductDto.brand_id;
+
+    if (brand_id) {
+      const brand = await prisma.productBrand.findUnique({
+        where: {
+          id: brand_id
+        }
+      });
+
+      if (!brand) throw new AppError("Brand not found", 404);
+    }
 
     product = await prisma.product.update({
       where: {
         id
       },
       include: {
-        inventory: true
+        inventory: true,
+        brand: true
       },
       data: {
         ...updateProductDto,
+        brand_id,
         inventory: {
           update: {
             quantity: quantity || product.inventory?.quantity

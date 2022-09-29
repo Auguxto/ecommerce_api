@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from "class-validator";
+import { IsString, IsNumber, IsOptional } from "class-validator";
 
 export class CreateProductDto {
   constructor(partial: Partial<CreateProductDto>) {
@@ -7,6 +7,10 @@ export class CreateProductDto {
 
   @IsString()
   name: string;
+
+  @IsOptional()
+  @IsString()
+  brand_id: string;
 
   @IsNumber()
   quantity: number;
