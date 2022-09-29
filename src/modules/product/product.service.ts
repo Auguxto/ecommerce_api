@@ -20,14 +20,21 @@ export default class ProductService {
 
     if (!user || !user.admin) throw new AppError("Unauthorized", 401);
 
+    const quantity = createProductDto.quantity;
+
+    delete createProductDto.quantity;
+
     const product = await prisma.product.create({
       data: {
         ...createProductDto,
         inventory: {
           create: {
-            quantity: createProductDto.quantity
+            quantity: quantity
           }
         }
+      },
+      include: {
+        inventory: true
       }
     });
 
@@ -73,6 +80,10 @@ export default class ProductService {
 
     if (!product) throw new AppError("Product nout found", 404);
 
+    const quantity = updateProductDto.quantity;
+
+    delete updateProductDto.quantity;
+
     product = await prisma.product.update({
       where: {
         id
@@ -84,7 +95,7 @@ export default class ProductService {
         ...updateProductDto,
         inventory: {
           update: {
-            quantity: updateProductDto.quantity || product.inventory?.quantity
+            quantity: quantity || product.inventory?.quantity
           }
         }
       }
