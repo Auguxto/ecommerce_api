@@ -20,7 +20,10 @@ export default class UserService {
     user = await prisma.user.create({
       data: {
         ...createUserDto,
-        password
+        password,
+        cart: {
+          create: {}
+        }
       }
     });
 

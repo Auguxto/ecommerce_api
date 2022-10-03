@@ -22,6 +22,7 @@ model User {
   newsletter Boolean   @default(false)
   birthday   DateTime
   adresses   Address[]
+  cart       Cart?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
 }
@@ -51,6 +52,7 @@ model Product {
   price       Float
   warranty    Int
   description String
+  carts_item  CartItem[]
   created_at  DateTime          @default(now())
   updated_at  DateTime          @updatedAt
 }
@@ -70,4 +72,24 @@ model ProductBrand {
   products   Product[]
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
+}
+
+model Cart {
+  id         String     @id @default(uuid())
+  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String     @unique
+  products   CartItem[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+}
+
+model CartItem {
+  id         String   @id @default(uuid())
+  product    Product  @relation(fields: [product_id], references: [id])
+  product_id String   @unique
+  quantity   Int
+  cart       Cart     @relation(fields: [cart_id], references: [id])
+  cart_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
